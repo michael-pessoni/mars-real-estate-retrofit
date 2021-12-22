@@ -31,6 +31,11 @@ class OverviewViewModel : ViewModel() {
     val properties: LiveData<List<MarsProperty>>
         get() = _properties
 
+    private val _navigateToSelectedProperty = MutableLiveData<MarsProperty>()
+
+    val navigateToSelectedProperty : LiveData<MarsProperty>
+        get() = _navigateToSelectedProperty
+
 
 
     /**
@@ -48,7 +53,7 @@ class OverviewViewModel : ViewModel() {
     private fun getMarsRealEstateProperties() {
         viewModelScope.launch {
             _status.value = MarsApiStatus.LOADING
-            var getPropertiesDeferred = MarsApi.retrofitService.getProperties()
+            val getPropertiesDeferred = MarsApi.retrofitService.getProperties()
             try {
                 _properties.value = getPropertiesDeferred.await()
                 _status.value = MarsApiStatus.DONE
@@ -57,6 +62,14 @@ class OverviewViewModel : ViewModel() {
                 _properties.value = ArrayList()
             }
         }
+    }
+
+   fun displayPropertyDetails(marsProperty: MarsProperty) {
+       _navigateToSelectedProperty.value = marsProperty
+   }
+
+    fun displayPropertyDetailsComplete() {
+        _navigateToSelectedProperty.value = null
     }
 
     /**
